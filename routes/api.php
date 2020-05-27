@@ -23,3 +23,14 @@ Route::get('/', 'ClientController@index');
 Route::post('/save', 'ClientController@save');
 Route::get('/edit/{id}', 'ClientController@edit');
 Route::post('/update/{id}', 'ClientController@update');
+
+Route::group([
+    'prefix' => 'auth'
+], function ($router) {
+
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+
+});
