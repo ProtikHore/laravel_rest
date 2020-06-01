@@ -12,7 +12,8 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+//        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('jwt', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -26,7 +27,7 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if ($token = $this->guard()->attempt($credentials)) {
+        if ($token = $this->guard()->claims(['nam'=> 'Protik'])->attempt($credentials)) {
             return $this->respondWithToken($token);
         }
 
@@ -101,5 +102,17 @@ class AuthController extends Controller
         $register->save();
 
         return $this->login($request);
+    }
+
+    public function payload(Request $request)
+    {
+        $payload = auth()->payload();
+        return response()->json($payload());
+
+        // then you can access the claims directly e.g.
+        $payload->get('sub'); // = 123
+        $payload['jti']; // = 'asfe4fq434asdf'
+        $payload('exp'); // = 123456
+        $payload->toArray(); // = ['sub' => 123, 'exp' => 123456, 'jti' => 'asfe4fq434asdf'] etc
     }
 }
